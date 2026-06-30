@@ -1,0 +1,40 @@
+# Local / IDE
+.claude/settings.local.json
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Secrets & environment
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Database & generated data (contains synthetic PII — regenerate locally)
+*.db
+*.db-shm
+*.db-wal
+generation_manifest.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
