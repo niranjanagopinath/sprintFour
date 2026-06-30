@@ -19,7 +19,6 @@
 
 | Skipped | Why |
 |---|---|
-| Auth / multi-user | Single-persona hackathon scope; adds nothing to the batch-review story |
 | Fuzzy entity matching | Exact match is fast and predictable; fuzzy match risks false positives in legal redaction |
 | Embedding-based clustering | `template_id` from the synthetic generator already proves batch-apply, no ML infra needed |
 | Visual/bounding-box PDF redaction | Text-level export proves the decision pipeline; visual markup is a separate product surface |
