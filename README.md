@@ -15,31 +15,17 @@
 - **Batch acceleration extras:** template clustering, confidence recalibration, ZIP export with redaction or anonymization applied.
 - **Layered architecture:** `routes → services → dal` — detection, review logic, and persistence stay separable and testable.
 
+
 ## What I Chose Not to Build (and Why)
 
 | Skipped | Why |
 |---|---|
-| Fuzzy entity matching | Exact match is fast and predictable; fuzzy match risks false positives in legal redaction |
-| Embedding-based clustering | `template_id` from the synthetic generator already proves batch-apply, no ML infra needed |
-| Visual/bounding-box PDF redaction | Text-level export proves the decision pipeline; visual markup is a separate product surface |
-| Undo/redo | Append-only `Decision` records already satisfy audit needs; reversal = new decision |
-| Polished UI/design system | Time went to throughput (queue, propagation, detection) — where Maya's minutes are actually saved |
-| Unbounded LLM concurrency | Capped Tier 2 at 2 concurrent calls so it can't starve Tier 1 |
-
-**Through-line:** optimize for reviewer leverage at batch scale, not feature completeness.
-
-## Performance — 200-Document Batch (measured)
-
-| Metric | Value |
-|---|---|
-| Documents ingested | 200 |
-| Detection threads | 5 (dedicated thread pool, true parallelism) |
-| LLM concurrency | 2 (Tier 2 runs outside the detection semaphore) |
-| Wall-clock to "200 ready" | ~56–62 s |
-| PII spans detected | 2,070 |
-| Throughput | ~194 docs/min |
-| First-wave completion | 198/200 docs done in 8 s once models were warm |
-
+| Custom PII detector | Presidio/GLiNER already handle the structured cases — the real problem was never detection accuracy, it was what a reviewer does with imperfect detection at scale |
+| Auth / multi-user support | Single-reviewer prototype; that effort was better spent elsewhere |
+| Transformer OCR model | Tesseract has a lighter footprint, sufficient accuracy, and lower dependency risk on a tight build day |
+| Always-on local LLM tier | Wired end-to-end but sits behind a feature flag with a deterministic fixture fallback, so a hardware issue on demo day can't take down the core workflow |
+| Redacted-PDF visual re-rendering | Pipeline produces redacted/anonymized text output; a clear next step, not something worth half-finishing now |
+| Automatic application of decisions | Propagation, clustering, and anonymization all require explicit reviewer approval before touching a document, regardless of confidence — the reviewer is accountable for what goes out under her name, and a tool that quietly trusts itself on her behalf is a liability, not a feature |
 ~5 min one-at-a-time loop → ~1 min concurrent pipeline.
 
 **Bugs found and fixed to get a clean concurrent run:**
